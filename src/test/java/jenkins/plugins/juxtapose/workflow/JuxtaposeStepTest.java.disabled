@@ -1,0 +1,138 @@
+package jenkins.plugins.juxtapose.workflow;
+
+import hudson.model.TaskListener;
+import jenkins.model.Jenkins;
+import jenkins.plugins.juxtapose.Messages;
+import jenkins.plugins.juxtapose.JuxtaposeNotifier;
+import jenkins.plugins.juxtapose.JuxtaposeService;
+import org.jenkinsci.plugins.workflow.steps.StepContext;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
+
+import java.io.PrintStream;
+import java.io.PrintWriter;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.mockito.Mockito.*;
+import static org.powermock.api.mockito.PowerMockito.spy;
+
+/**
+ * Traditional Unit tests, allows testing null Jenkins.getInstance()
+ */
+@RunWith(PowerMockRunner.class)
+@PrepareForTest({Jenkins.class,JuxtaposeStep.class})
+public class JuxtaposeStepTest {
+
+    @Mock
+    TaskListener taskListenerMock;
+    @Mock
+    PrintStream printStreamMock;
+    @Mock
+    PrintWriter printWriterMock;
+    @Mock
+    StepContext stepContextMock;
+    @Mock
+    JuxtaposeService juxtaposeServiceMock;
+    @Mock
+    Jenkins jenkins;
+    @Mock
+    JuxtaposeNotifier.DescriptorImpl juxtaposeDescMock;
+
+    @Before
+    public void setUp() {
+        PowerMockito.mockStatic(Jenkins.class);
+        when(jenkins.getDescriptorByType(JuxtaposeNotifier.DescriptorImpl.class)).thenReturn(juxtaposeDescMock);
+    }
+
+    @Test
+    public void testStepOverrides() throws Exception {
+        JuxtaposeStep.JuxtaposeStepExecution stepExecution = spy(new JuxtaposeStep.JuxtaposeStepExecution());
+        JuxtaposeStep juxtaposeSendStep = new JuxtaposeStep("success");
+        juxtaposeSendStep.setUrl("url");
+        stepExecution.step = juxtaposeSendStep;
+
+        when(Jenkins.getInstance()).thenReturn(jenkins);
+
+        stepExecution.listener = taskListenerMock;
+
+        when(taskListenerMock.getLogger()).thenReturn(printStreamMock);
+        doNothing().when(printStreamMock).println();
+
+        when(stepExecution.getJuxtaposeService(anyString())).thenReturn(juxtaposeServiceMock);
+        when(juxtaposeServiceMock.publish(anyString())).thenReturn(true);
+
+        stepExecution.run();
+        verify(stepExecution, times(1)).getJuxtaposeService("url");
+        verify(juxtaposeServiceMock, times(1)).publish("message");
+        assertFalse(stepExecution.step.isFailOnError());
+    }
+
+    @Test
+    public void testStepOverrides2() throws Exception {
+        JuxtaposeStep.JuxtaposeStepExecution stepExecution = spy(new JuxtaposeStep.JuxtaposeStepExecution());
+        JuxtaposeStep juxtaposeSendStep = new JuxtaposeStep("message");
+        juxtaposeSendStep.setUrl("url");
+        stepExecution.step = juxtaposeSendStep;
+
+        when(Jenkins.getInstance()).thenReturn(jenkins);
+
+        stepExecution.listener = taskListenerMock;
+
+        when(taskListenerMock.getLogger()).thenReturn(printStreamMock);
+        doNothing().when(printStreamMock).println();
+
+        when(stepExecution.getJuxtaposeService(anyString())).thenReturn(juxtaposeServiceMock);
+        when(juxtaposeServiceMock.publish(anyString())).thenReturn(true);
+
+        stepExecution.run();
+        verify(stepExecution, times(1)).getJuxtaposeService("url");
+        verify(juxtaposeServiceMock, times(1)).publish("message");
+        assertFalse(stepExecution.step.isFailOnError());
+    }
+
+    @Test
+    public void testValuesForGlobalConfig() throws Exception {
+
+        JuxtaposeStep.JuxtaposeStepExecution stepExecution = spy(new JuxtaposeStep.JuxtaposeStepExecution());
+        stepExecution.step = new JuxtaposeStep("message");
+
+        when(Jenkins.getInstance()).thenReturn(jenkins);
+
+        stepExecution.listener = taskListenerMock;
+
+        when(juxtaposeDescMock.getUrl()).thenReturn("globalUrl");
+
+        when(taskListenerMock.getLogger()).thenReturn(printStreamMock);
+        doNothing().when(printStreamMock).println();
+
+        when(stepExecution.getJuxtaposeService(anyString())).thenReturn(juxtaposeServiceMock);
+
+        stepExecution.run();
+        verify(stepExecution, times(1)).getJuxtaposeService("globalUrl");
+        verify(juxtaposeServiceMock, times(1)).publish("message");
+        assertNull(stepExecution.step.getUrl());
+    }
+
+    @Test
+    public void testNullJenkinsInstance() throws Exception {
+
+        JuxtaposeStep.JuxtaposeStepExecution stepExecution = spy(new JuxtaposeStep.JuxtaposeStepExecution());
+        stepExecution.step = new JuxtaposeStep("message");
+
+        when(Jenkins.getInstance()).thenThrow(NullPointerException.class);
+
+        stepExecution.listener = taskListenerMock;
+
+        when(taskListenerMock.error(anyString())).thenReturn(printWriterMock);
+        doNothing().when(printStreamMock).println();
+
+        stepExecution.run();
+        verify(taskListenerMock, times(1)).error(Messages.NotificationFailedWithException(anyString()));
+    }
+}

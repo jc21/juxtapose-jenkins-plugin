@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form" xmlns:c="/lib/credentials">
+    <f:entry name="event" title="Event Type" field="event">
+        <select name="event">
+            <option value="success">Build Success</option>
+            <option value="failure">Build Failure</option>
+            <option value="aborted">Build Aborted</option>
+            <option value="changed">Build Changed</option>
+            <option value="fixed">Build Fixed</option>
+            <option value="regression">Build Regression</option>
+            <option value="unstable">Build Unstable</option>
+        </select>
+    </f:entry>
+    <f:advanced>
+        <f:entry field="url" title="Webhook URL">
+             <f:textbox />
+        </f:entry>
+        <f:entry field="failOnError">
+            <f:checkbox title="Fail On Error" default="false"/>
+        </f:entry>
+    </f:advanced>
+</j:jelly>
