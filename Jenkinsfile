@@ -12,8 +12,7 @@ pipeline {
     }
     stage('Build') {
       steps {
-        sh 'mkdir -p $(pwd)/.m2'
-        sh 'docker run --rm -v $(pwd):/src -v $(pwd)/.m2:/root/.m2 -w /src maven:3-jdk-8 mvn clean package'
+        sh 'docker run --rm -v $(pwd):/src -v /tmp/.m2:/root/.m2 -w /src maven:3-jdk-8 mvn clean package'
       }
     }
     stage('Publish') {
