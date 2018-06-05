@@ -22,7 +22,7 @@ pipeline {
       }
       steps {
         dir(path: 'target') {
-            archiveArtifacts(artifacts: '**/*.hpi', caseSensitive: true, onlyIfSuccessful: true)
+            archiveArtifacts(artifacts: '*.hpi', caseSensitive: true, onlyIfSuccessful: true)
         }
       }
     }
