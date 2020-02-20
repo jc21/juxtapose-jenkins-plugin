@@ -18,11 +18,10 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.StaplerRequest;
 
 import java.io.IOException;
-import java.util.logging.Logger;
 
 public class JuxtaposeNotifier extends Notifier {
 
-    private String  url;
+    private String url;
 
     @Override
     public DescriptorImpl getDescriptor() {
@@ -48,7 +47,7 @@ public class JuxtaposeNotifier extends Notifier {
     }
 
     public JuxtaposeService newJuxtaposeService(AbstractBuild build, BuildListener listener) {
-        String  webhookUrl = this.url;
+        String webhookUrl = this.url;
         EnvVars env;
 
         if (StringUtils.isEmpty(webhookUrl)) {
@@ -68,7 +67,8 @@ public class JuxtaposeNotifier extends Notifier {
     }
 
     @Override
-    public boolean perform(AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener) throws InterruptedException, IOException {
+    public boolean perform(AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener)
+            throws InterruptedException, IOException {
         return true;
     }
 
@@ -116,11 +116,9 @@ public class JuxtaposeNotifier extends Notifier {
 
     @Deprecated
     public static class JuxtaposeJobProperty extends hudson.model.JobProperty<AbstractProject<?, ?>> {
-/*
-        @DataBoundConstructor
-        public JuxtaposeJobProperty() {
-        }
-*/
+        /*
+         * @DataBoundConstructor public JuxtaposeJobProperty() { }
+         */
         @Override
         public boolean prebuild(AbstractBuild<?, ?> build, BuildListener listener) {
             return super.prebuild(build, listener);

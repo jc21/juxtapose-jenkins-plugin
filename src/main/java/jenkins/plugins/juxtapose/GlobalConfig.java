@@ -7,7 +7,6 @@ import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
 import hudson.util.FormValidation;
 
-
 @Extension
 public class GlobalConfig extends GlobalConfiguration {
 

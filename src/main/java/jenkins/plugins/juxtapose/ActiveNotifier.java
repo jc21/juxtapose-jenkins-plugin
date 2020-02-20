@@ -8,7 +8,7 @@ import hudson.model.Result;
 public class ActiveNotifier implements FineGrainedNotifier {
 
     JuxtaposeNotifier notifier;
-    BuildListener     listener;
+    BuildListener listener;
 
     public ActiveNotifier(JuxtaposeNotifier notifier, BuildListener listener) {
         super();
@@ -27,41 +27,11 @@ public class ActiveNotifier implements FineGrainedNotifier {
     }
 
     public void finalized(AbstractBuild build) {
-        /*
-        AbstractProject<?, ?> project       = build.getProject();
-        Result                result        = build.getResult();
-        AbstractBuild<?, ?>   previousBuild = project.getLastBuild();
-
-        do {
-            previousBuild = previousBuild.getPreviousCompletedBuild();
-        } while (previousBuild != null && previousBuild.getResult() == Result.ABORTED);
-
-        Result previousResult = (previousBuild != null) ? previousBuild.getResult() : Result.SUCCESS;
-
-        if ((result.isWorseThan(previousResult) || moreTestFailuresThanPreviousBuild(build, previousBuild))) {
-            // Regression:
-            getJuxtapose(build).publish("regression", build);
-        }
-        */
     }
 
     public void completed(AbstractBuild build) {
         Result result = build.getResult();
-        /*
-        AbstractProject<?, ?> project       = build.getProject();
 
-        AbstractBuild<?, ?>   previousBuild = project.getLastBuild();
-
-        do {
-            try {
-                previousBuild = previousBuild.getPreviousCompletedBuild();
-            } catch (NullPointerException e) {
-                previousBuild = null;
-            }
-        } while (previousBuild != null && previousBuild.getResult() == Result.ABORTED);
-
-        Result previousResult = (previousBuild != null) ? previousBuild.getResult() : Result.SUCCESS;
-        */
         if (result == Result.ABORTED) {
             getJuxtapose(build).publish("aborted", build);
         } else if (result == Result.FAILURE) {

@@ -95,7 +95,6 @@ public class StandardJuxtaposeService implements JuxtaposeService {
         return publish(data);
     }
 
-
     @Override
     public boolean publish(JSONObject data) {
         boolean result = true;
@@ -105,7 +104,8 @@ public class StandardJuxtaposeService implements JuxtaposeService {
             HttpPost post;
             post = new HttpPost(this.url);
 
-            //logger.log(Level.INFO, "Send to Juxtapose using " + this.url + ": " + data.toString(2));
+            // logger.log(Level.INFO, "Send to Juxtapose using " + this.url + ": " +
+            // data.toString(2));
             logger.log(Level.INFO, "Send to Juxtapose using " + this.url);
 
             CloseableHttpClient client = getHttpClient();
@@ -119,8 +119,8 @@ public class StandardJuxtaposeService implements JuxtaposeService {
 
                 int responseCode = response.getStatusLine().getStatusCode();
                 if (responseCode != HttpStatus.SC_OK) {
-                    HttpEntity entity         = response.getEntity();
-                    String     responseString = EntityUtils.toString(entity);
+                    HttpEntity entity = response.getEntity();
+                    String responseString = EntityUtils.toString(entity);
                     logger.log(Level.WARNING, "Juxtapose post may have failed. Response: " + responseString);
                     logger.log(Level.WARNING, "Response Code: " + responseCode);
                     result = false;
@@ -139,7 +139,7 @@ public class StandardJuxtaposeService implements JuxtaposeService {
     }
 
     protected CloseableHttpClient getHttpClient() {
-        final HttpClientBuilder   clientBuilder       = HttpClients.custom();
+        final HttpClientBuilder clientBuilder = HttpClients.custom();
         final CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
 
         clientBuilder.setDefaultCredentialsProvider(credentialsProvider);
@@ -148,7 +148,7 @@ public class StandardJuxtaposeService implements JuxtaposeService {
             ProxyConfiguration proxy = Jenkins.getInstance().proxy;
 
             if (proxy != null) {
-                final HttpHost         proxyHost    = new HttpHost(proxy.name, proxy.port);
+                final HttpHost proxyHost = new HttpHost(proxy.name, proxy.port);
                 final HttpRoutePlanner routePlanner = new DefaultProxyRoutePlanner(proxyHost);
                 clientBuilder.setRoutePlanner(routePlanner);
 
@@ -158,7 +158,7 @@ public class StandardJuxtaposeService implements JuxtaposeService {
                 if (username != null && !"".equals(username.trim())) {
                     logger.info("Using proxy authentication (user=" + username + ")");
                     credentialsProvider.setCredentials(new AuthScope(proxyHost),
-                                                       new UsernamePasswordCredentials(username, password));
+                            new UsernamePasswordCredentials(username, password));
                 }
             }
         }

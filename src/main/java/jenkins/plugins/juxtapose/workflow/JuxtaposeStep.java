@@ -25,8 +25,8 @@ import javax.inject.Inject;
  */
 public class JuxtaposeStep extends AbstractStepImpl {
 
-    private String  event;
-    private String  url;
+    private String event;
+    private String url;
     private boolean failOnError;
 
     @DataBoundConstructor
@@ -95,7 +95,8 @@ public class JuxtaposeStep extends AbstractStepImpl {
         @Override
         protected Void run() throws Exception {
 
-            // default to global config values if not set in step, but allow step to override all global settings
+            // default to global config values if not set in step, but allow step to
+            // override all global settings
             Jenkins jenkins;
 
             // Jenkins.getInstance() may return null, no event sent in that case
@@ -106,18 +107,20 @@ public class JuxtaposeStep extends AbstractStepImpl {
                 return null;
             }
 
-            JuxtaposeNotifier.DescriptorImpl juxtaposeDesc = jenkins.getDescriptorByType(JuxtaposeNotifier.DescriptorImpl.class);
+            JuxtaposeNotifier.DescriptorImpl juxtaposeDesc = jenkins
+                    .getDescriptorByType(JuxtaposeNotifier.DescriptorImpl.class);
 
             String url = step.url != null ? step.url : juxtaposeDesc.getUrl();
 
             if (step.getEvent() == null || step.getEvent().isEmpty()) {
                 listener.getLogger().println(Messages.JuxtaposeStepNoEvent());
             } else if (url == null || url.isEmpty()) {
-                // placing in console log to simplify testing of retrieving values from global config or from step field; also used for tests
+                // placing in console log to simplify testing of retrieving values from global
+                // config or from step field; also used for tests
                 listener.getLogger().println(Messages.JuxtaposeStepSkipped());
             } else {
                 JuxtaposeService juxtaposeService = getJuxtaposeService(url);
-                boolean          publishSuccess   = juxtaposeService.publish(step.getEvent(), build);
+                boolean publishSuccess = juxtaposeService.publish(step.getEvent(), build);
 
                 if (!publishSuccess && step.failOnError) {
                     throw new AbortException(Messages.NotificationFailed());

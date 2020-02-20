@@ -39,8 +39,8 @@ public class JuxtaposeListener extends RunListener<AbstractBuild> {
 
     @Override
     public void onFinalized(AbstractBuild r) {
-         getNotifier(r.getProject(), null).finalized(r);
-         super.onFinalized(r);
+        getNotifier(r.getProject(), null).finalized(r);
+        super.onFinalized(r);
     }
 
     @SuppressWarnings("unchecked")
@@ -48,7 +48,7 @@ public class JuxtaposeListener extends RunListener<AbstractBuild> {
         Map<Descriptor<Publisher>, Publisher> map = project.getPublishersList().toMap();
         for (Publisher publisher : map.values()) {
             if (publisher instanceof JuxtaposeNotifier) {
-                return new ActiveNotifier((JuxtaposeNotifier) publisher, (BuildListener)listener);
+                return new ActiveNotifier((JuxtaposeNotifier) publisher, (BuildListener) listener);
             }
         }
         return new DisabledNotifier();
